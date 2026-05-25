@@ -8,6 +8,55 @@ FILE_NAME = "students.txt"
 
 # FILE FUNCTIONS
 
+def display_students():
+    listbox.delete(0, END)
+
+    students = read_students_data()
+
+    if not students:
+        listbox.insert(END, "No records found.")
+        return
+
+    for student in students:
+        display_text = (
+            f"Name: {student['name']} | "
+            f"ID: {student['id']} | "
+            f"Age: {student['age']} | "
+            f"Grade: {student['grade']}"
+        )
+
+        listbox.insert(END, display_text)
+
+def search_student():
+    target_id = id_entry.get().strip()
+
+    if target_id == "":
+        messagebox.showerror("Error", "Enter Student ID to search!")
+        return
+
+    students = read_students_data()
+
+    found = False
+
+    listbox.delete(0, END)
+
+    for student in students:
+        if student["id"] == target_id:
+            display_text = (
+                f"Name: {student['name']} | "
+                f"ID: {student['id']} | "
+                f"Age: {student['age']} | "
+                f"Grade: {student['grade']}"
+            )
+
+            listbox.insert(END, display_text)
+            found = True
+            break
+
+    if not found:
+        messagebox.showinfo("Search Result", "Student not found!")
+
+
 def update_student():
     target_id = id_entry.get().strip()
 
