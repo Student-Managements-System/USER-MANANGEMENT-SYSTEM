@@ -8,6 +8,101 @@ FILE_NAME = "students.txt"
 
 # FILE FUNCTIONS
 
+def update_student():
+    target_id = id_entry.get().strip()
+
+    if target_id == "":
+        messagebox.showerror("Error", "Enter Student ID to update!")
+        return
+
+    students = read_students_data()
+
+    updated = False
+
+    for student in students:
+        if student["id"] == target_id:
+
+            new_name = name_entry.get().strip()
+            new_age = age_entry.get().strip()
+            new_grade = grade_entry.get().strip()
+
+            if new_name != "":
+                student["name"] = new_name
+
+            if new_age != "":
+                try:
+                    int(new_age)
+                    student["age"] = new_age
+                except ValueError:
+                    messagebox.showerror("Error", "Age must be integer!")
+                    return
+
+            if new_grade != "":
+                try:
+                    float(new_grade)
+                    student["grade"] = new_grade
+                except ValueError:
+                    messagebox.showerror("Error", "Grade must be number!")
+                    return
+
+            updated = True
+            break
+
+    if updated:
+        with open(FILE_NAME, "w") as file:
+            for student in students:
+                file.write(
+                    f"{student['name']},"
+                    f"{student['id']},"
+                    f"{student['age']},"
+                    f"{student['grade']}\n"
+                )
+
+        messagebox.showinfo("Success", "Student updated successfully!")
+
+        clear_fields()
+        display_students()
+
+    else:
+        messagebox.showerror("Error", "Student ID not found!")
+
+
+def delete_student():
+    target_id = id_entry.get().strip()
+
+    if target_id == "":
+        messagebox.showerror("Error", "Enter Student ID to delete!")
+        return
+
+    students = read_students_data()
+
+    new_students = []
+    deleted = False
+
+    for student in students:
+        if student["id"] == target_id:
+            deleted = True
+        else:
+            new_students.append(student)
+
+    if deleted:
+        with open(FILE_NAME, "w") as file:
+            for student in new_students:
+                file.write(
+                    f"{student['name']},"
+                    f"{student['id']},"
+                    f"{student['age']},"
+                    f"{student['grade']}\n"
+                )
+
+        messagebox.showinfo("Success", "Student deleted successfully!")
+
+        clear_fields()
+        display_students()
+
+    else:
+        messagebox.showerror("Error", "Student ID not found!")
+
 
 
 
