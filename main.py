@@ -27,7 +27,7 @@ root.config(bg="white")
 
 title_label = Label(
     root,
-    text="Student Management System",
+    text="USTP Student ID System",
     font=("Arial", 20, "bold"),
     bg="white"
 )
