@@ -8,6 +8,69 @@ FILE_NAME = "students.txt"
 
 # FILE FUNCTIONS
 
+def add_student():
+    name = name_entry.get().strip()
+    student_id = id_entry.get().strip()
+    age = age_entry.get().strip()
+    grade = grade_entry.get().strip()
+
+    # Validation
+    if name == "" or student_id == "" or age == "" or grade == "":
+        messagebox.showerror("Error", "All fields are required!")
+        return
+
+    try:
+        age = int(age)
+        grade = float(grade)
+    except ValueError:
+        messagebox.showerror("Error", "Age must be integer and Grade must be number!")
+        return
+
+    # Check duplicate ID
+    students = read_students_data()
+
+    for student in students:
+        if student["id"] == student_id:
+            messagebox.showerror("Error", "Student ID already exists!")
+            return
+
+    # Save to file
+    with open(FILE_NAME, "a") as file:
+        file.write(f"{name},{student_id},{age},{grade}\n")
+
+    messagebox.showinfo("Success", "Student added successfully!")
+
+    clear_fields()
+    display_students()
+
+
+def read_students_data():
+    students = []
+
+    if not os.path.exists(FILE_NAME):
+        return students
+
+    with open(FILE_NAME, "r") as file:
+        lines = file.readlines()
+
+        for line in lines:
+            line = line.strip()
+
+            if line:
+                name, student_id, age, grade = line.split(",")
+
+                student = {
+                    "name": name,
+                    "id": student_id,
+                    "age": age,
+                    "grade": grade
+                }
+
+                students.append(student)
+
+    return students
+
+
 def display_students():
     listbox.delete(0, END)
 
@@ -26,6 +89,7 @@ def display_students():
         )
 
         listbox.insert(END, display_text)
+
 
 def search_student():
     target_id = id_entry.get().strip()
