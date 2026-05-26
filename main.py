@@ -1,27 +1,3 @@
-<<<<<<< HEAD
-# VELEZ
-def compute_average():
-    students = read_students_data()
-
-    if not students:
-        messagebox.showinfo(
-            "Average",
-            "No student records found!"
-        )
-        return
-
-    total = 0
-
-    for student in students:
-        total += float(student["grade"])
-
-    average = total / len(students)
-
-    messagebox.showinfo(
-        "Average Grade",
-        f"Average Grade: {average:.2f}"
-    )
-=======
 from tkinter import *
 from tkinter import messagebox
 import os
@@ -239,6 +215,23 @@ def delete_student():
 
     else:
         messagebox.showerror("Error", "Student ID not found!")
+
+
+def compute_average():
+    students = read_students_data()
+
+    if not students:
+        messagebox.showinfo("Average", "No student records found!")
+        return
+
+    total = 0
+
+    for student in students:
+        total += float(student["grade"])
+
+    average = total / len(students)
+
+    messagebox.showinfo("Average Grade", f"Average Grade: {average:.2f}")
 
 
 def read_students_data():
@@ -462,4 +455,3 @@ listbox.grid(row=9, column=0, columnspan=2, padx=10, pady=20)
 # RUN PROGRAM
 
 root.mainloop()
->>>>>>> c2f9204f2efe60b076eba1cd04ecdcaf386ceb96
