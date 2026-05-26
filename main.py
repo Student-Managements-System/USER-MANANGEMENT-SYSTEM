@@ -217,6 +217,151 @@ def delete_student():
         messagebox.showerror("Error", "Student ID not found!")
 
 
+def read_students_data():
+    """Read student records from the data file."""
+    if not os.path.exists(FILE_NAME):
+        return []
+
+    students = []
+    with open(FILE_NAME, "r") as file:
+        for line in file:
+            line = line.strip()
+            if not line:
+                continue
+
+            parts = line.split(",")
+            if len(parts) != 4:
+                continue
+
+            students.append({
+                "name": parts[0],
+                "id": parts[1],
+                "age": parts[2],
+                "grade": parts[3],
+            })
+
+    return students
+
+
+def add_student():
+    """Add a new student record to the file."""
+    name = name_entry.get().strip()
+    student_id = id_entry.get().strip()
+    age = age_entry.get().strip()
+    grade = grade_entry.get().strip()
+
+    if not name or not student_id or not age or not grade:
+        messagebox.showerror("Error", "All fields are required!")
+        return
+
+    try:
+        int(age)
+    except ValueError:
+        messagebox.showerror("Error", "Age must be an integer!")
+        return
+
+    try:
+        float(grade)
+    except ValueError:
+        messagebox.showerror("Error", "Grade must be a number!")
+        return
+
+    students = read_students_data()
+    if any(student["id"] == student_id for student in students):
+        messagebox.showerror("Error", "Student ID already exists!")
+        return
+
+    with open(FILE_NAME, "a") as file:
+        file.write(f"{name},{student_id},{age},{grade}\n")
+
+    messagebox.showinfo("Success", "Student added successfully!")
+    clear_fields()
+    display_students()
+
+
+def compute_average():
+    """Compute and display the average grade of all students."""
+    students = read_students_data()
+    if not students:
+        messagebox.showinfo("Average Grade", "No student records available.")
+        return
+
+    grades = []
+    for student in students:
+        try:
+            grades.append(float(student["grade"]))
+        except ValueError:
+            continue
+
+    if not grades:
+        messagebox.showinfo("Average Grade", "No valid grade values found.")
+        return
+
+    average = sum(grades) / len(grades)
+    messagebox.showinfo("Average Grade", f"Average grade: {average:.2f}")
+
+
+def show_grade_graph():
+    """Display a simple bar graph of student grades."""
+    students = read_students_data()
+    if not students:
+        messagebox.showinfo("Graph", "No student records available.")
+        return
+
+    grades = []
+    names = []
+    for student in students:
+        try:
+            grades.append(float(student["grade"]))
+            names.append(student["name"])
+        except ValueError:
+            continue
+
+    if not grades:
+        messagebox.showinfo("Graph", "No valid grade values available.")
+        return
+
+    graph_window = Toplevel(root)
+    graph_window.title("Grade Graph")
+    graph_window.geometry("760x420")
+
+    canvas = Canvas(graph_window, width=740, height=380, bg="white")
+    canvas.pack(padx=10, pady=10)
+
+    margin_x = 60
+    margin_y = 40
+    chart_width = 660
+    chart_height = 300
+    max_grade = max(grades + [100])
+    bar_width = chart_width / max(len(grades), 1)
+
+    canvas.create_line(margin_x, margin_y, margin_x, margin_y + chart_height, width=2)
+    canvas.create_line(margin_x, margin_y + chart_height, margin_x + chart_width, margin_y + chart_height, width=2)
+
+    for i, grade in enumerate(grades):
+        x0 = margin_x + i * bar_width + 10
+        x1 = x0 + bar_width * 0.7
+        y1 = margin_y + chart_height
+        y0 = y1 - (grade / max_grade) * chart_height
+
+        canvas.create_rectangle(x0, y0, x1, y1, fill="#4caf50", outline="#2e7d32")
+        canvas.create_text((x0 + x1) / 2, y0 - 10, text=f"{grade:.1f}", font=("Arial", 8), fill="#333")
+        canvas.create_text((x0 + x1) / 2, y1 + 12, text=names[i][:10], font=("Arial", 8), fill="#333")
+
+    for step in range(0, 6):
+        y = margin_y + chart_height - step * (chart_height / 5)
+        value = int(max_grade * step / 5)
+        canvas.create_line(margin_x - 5, y, margin_x, y, width=1)
+        canvas.create_text(margin_x - 10, y, text=str(value), anchor=E, font=("Arial", 8))
+
+
+def clear_fields():
+    """Clear all input fields in the form."""
+    name_entry.delete(0, END)
+    id_entry.delete(0, END)
+    age_entry.delete(0, END)
+    grade_entry.delete(0, END)
+    id_entry.focus_set()
 
 
 # GUI FUNCTIONS
@@ -281,6 +426,9 @@ Button(root, text="Compute Average", width=20, bg="black", fg="white",
 
 Button(root, text="Clear Fields", width=20, bg="gray", fg="white",
        command=clear_fields).grid(row=8, column=0, pady=10)
+
+Button(root, text="Show Grade Graph", width=20, bg="#005f73", fg="white",
+       command=show_grade_graph).grid(row=8, column=1, pady=10)
 
 # LISTBOX
 
