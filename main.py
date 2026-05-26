@@ -234,69 +234,7 @@ def compute_average():
     messagebox.showinfo("Average Grade", f"Average Grade: {average:.2f}")
 
 
-def read_students_data():
-    """Read student records from the data file."""
-    if not os.path.exists(FILE_NAME):
-        return []
 
-    students = []
-    with open(FILE_NAME, "r") as file:
-        for line in file:
-            line = line.strip()
-            if not line:
-                continue
-
-            parts = line.split(",")
-            if len(parts) != 4:
-                continue
-
-            students.append({
-                "name": parts[0],
-                "id": parts[1],
-                "age": parts[2],
-                "grade": parts[3],
-            })
-
-    return students
-
-
-def add_student():
-    """Add a new student record to the file."""
-    name = name_entry.get().strip()
-    student_id = id_entry.get().strip()
-    age = age_entry.get().strip()
-    grade = grade_entry.get().strip()
-
-    if not name or not student_id or not age or not grade:
-        messagebox.showerror("Error", "All fields are required!")
-        return
-
-    try:
-        int(age)
-    except ValueError:
-        messagebox.showerror("Error", "Age must be an integer!")
-        return
-
-    try:
-        float(grade)
-    except ValueError:
-        messagebox.showerror("Error", "Grade must be a number!")
-        return
-
-    students = read_students_data()
-    if any(student["id"] == student_id for student in students):
-        messagebox.showerror("Error", "Student ID already exists!")
-        return
-
-    with open(FILE_NAME, "a") as file:
-        file.write(f"{name},{student_id},{age},{grade}\n")
-
-    messagebox.showinfo("Success", "Student added successfully!")
-    clear_fields()
-    display_students()
-
-
-def compute_average():
     """Compute and display the average grade of all students."""
     students = read_students_data()
     if not students:
@@ -372,17 +310,14 @@ def show_grade_graph():
         canvas.create_text(margin_x - 10, y, text=str(value), anchor=E, font=("Arial", 8))
 
 
+# GUI FUNCTIONS
+
 def clear_fields():
-    """Clear all input fields in the form."""
     name_entry.delete(0, END)
     id_entry.delete(0, END)
     age_entry.delete(0, END)
     grade_entry.delete(0, END)
     id_entry.focus_set()
-
-
-# GUI FUNCTIONS
-
 
 
 # TKINTER WINDOW
